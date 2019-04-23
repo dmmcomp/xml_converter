@@ -1,0 +1,5 @@
+com/converter/promob/xml/model/Item.class
+com/converter/promob/xml/controllers/PromobXmlController.class
+com/converter/promob/xml/config/Configuracao.class
+com/converter/promob/xml/service/XlsService.class
+com/converter/promob/xml/service/ConverterService.class
