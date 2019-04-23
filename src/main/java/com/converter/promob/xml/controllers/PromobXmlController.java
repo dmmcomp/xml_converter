@@ -31,6 +31,11 @@ public class PromobXmlController {
     @Autowired
     private ConverterService converterService;
 
+    @RequestMapping("/")
+    @ResponseBody
+    public String testeApp()  {
+      return "A Aplicação foi inicializada com sucesso!";
+    }
 
     @PostMapping(value="/execute")
     @ResponseBody
