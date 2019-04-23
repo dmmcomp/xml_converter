@@ -97,13 +97,13 @@ public class ConverterService {
         return itemTag.getAttribute("REFERENCE");
     }
 
-    private int getBord(Element itemReference,int borda) {
+    private String getBord(Element itemReference,int borda) {
 
         Element bord_sup = (Element) itemReference.getElementsByTagName("FITA_BORDA_"+borda).item(0);
         if(bord_sup==null){
-            return 0;
+            return "";
         }
-        return getIntegerAttribute(bord_sup, "REFERENCE");
+        return (bord_sup.getAttribute("REFERENCE").equals("1") ? "X" : "");
     }
 
     private boolean doesNotHasItems(Element item) {

@@ -13,10 +13,10 @@ public class Item {
     private String larg;
     private int quant;
     private String material;
-    private int bord_sup;
-    private int bord_inf;
-    private int bord_dir;
-    private int bord_esq;
+    private String bord_sup;
+    private String bord_inf;
+    private String bord_dir;
+    private String bord_esq;
     private String veio;
     private String chapa;
     private String esp;
@@ -116,35 +116,35 @@ public class Item {
         this.esp = esp;
     }
 
-    public int getBord_sup() {
+    public String getBord_sup() {
         return bord_sup;
     }
 
-    public void setBord_sup(int bord_sup) {
+    public void setBord_sup(String bord_sup) {
         this.bord_sup = bord_sup;
     }
 
-    public int getBord_inf() {
+    public String getBord_inf() {
         return bord_inf;
     }
 
-    public void setBord_inf(int bord_inf) {
+    public void setBord_inf(String bord_inf) {
         this.bord_inf = bord_inf;
     }
 
-    public int getBord_dir() {
+    public String getBord_dir() {
         return bord_dir;
     }
 
-    public void setBord_dir(int bord_dir) {
+    public void setBord_dir(String bord_dir) {
         this.bord_dir = bord_dir;
     }
 
-    public int getBord_esq() {
+    public String getBord_esq() {
         return bord_esq;
     }
 
-    public void setBord_esq(int bord_esq) {
+    public void setBord_esq(String bord_esq) {
         this.bord_esq = bord_esq;
     }
 
