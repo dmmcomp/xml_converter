@@ -78,7 +78,7 @@ public class ConverterService {
     }
 
     public boolean isComponent(Element item){
-        return (item.getAttribute("COMPONENT") == "Y");
+        return (item.getAttribute("COMPONENT").equals("Y"));
     }
 
     private int getIntegerAttribute(Element item, String attribute) {
