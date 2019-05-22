@@ -29,7 +29,15 @@ public class ConverterService {
         Document xmlDocument = getDocument(xmlInputStream);
         List<Item> listItems = new ArrayList<>();
 
-        NodeList ambientes = xmlDocument.getElementsByTagName("AMBIENT");
+        process("AMBIENT",xmlDocument, listItems);
+        process("ITEMSWITHOUTPRICE",xmlDocument, listItems);
+
+        return xlsService.generateXlsFile(listItems);
+
+    }
+
+    private void process(String bigTag,Document xmlDocument, List<Item> listItems) {
+        NodeList ambientes = xmlDocument.getElementsByTagName(bigTag);
         for (int i = 0; i < ambientes.getLength(); i++) {
             Element listaItems = (Element) ambientes.item(i);
 
@@ -44,37 +52,52 @@ public class ConverterService {
                     if (itemPai != null) {
                         listItems.add(itemPai);
                     }
-                    itemPai = new Item(getIntegerAttribute(item, "UNIQUEID"), true, item.getAttribute("DESCRIPTION"));
-                } else if (doesNotHasItems(item) && isComponent(item)) {
-                    Item ic = new Item();
-                    ic.setAmbiente(listaItems.getAttribute("DESCRIPTION"));
-                    ic.setUniqueId(getIntegerAttribute(item, "UNIQUEID"));
-                    ic.setDescription(item.getAttribute("DESCRIPTION"));
-                    ic.setParentNode(false);
-                    ic.setQuant(getIntegerAttribute(item, "REPETITION"));
-                    ic.setComp(item.getAttribute("WIDTH"));
-                    ic.setLarg(item.getAttribute("DEPTH"));
-                    ic.setEsp(item.getAttribute("HEIGHT"));
+                    itemPai = new Item(
+                            getIntegerAttribute(item, "UNIQUEID"),
+                            true,
+                            item.getAttribute("DESCRIPTION"),
+                            false);
 
-                    Element  itemReference= (Element) item.getElementsByTagName("REFERENCES").item(0);
-
-                    ic.setBord_sup(getBord(itemReference,1));
-                    ic.setBord_inf(getBord(itemReference,2));
-                    ic.setBord_esq(getBord(itemReference,3));
-                    ic.setBord_dir(getBord(itemReference,4));
-                    ic.setChapa(
-                            getReferenceAttributeByTag(item,"MATERIAL")
-                                    +"-"+getReferenceAttributeByTag(item,"THICKNESS")
-                                    +"-"+getReferenceAttributeByTag(item,"MODEL")
-                    );
+                }else if(isLooseComponent(item)){
+                    Item e = itemConstrutor(listaItems, item);
+                    e.setComponent(true);
+                    listItems.add(e);
+                }
+                else if (doesNotHasItems(item) && isComponent(item)) {
+                    Item ic = itemConstrutor(listaItems, item);
                     itemPai.getChildItems().add(ic);
                 }
             }
         }
+    }
 
+    private Item itemConstrutor(Element listaItems, Element item) {
+        Item ic = new Item();
+        ic.setAmbiente(listaItems.getAttribute("DESCRIPTION"));
+        ic.setUniqueId(getIntegerAttribute(item, "UNIQUEID"));
+        ic.setDescription(item.getAttribute("DESCRIPTION"));
+        ic.setParentNode(false);
+        ic.setQuant(getIntegerAttribute(item, "REPETITION"));
+        ic.setComp(item.getAttribute("WIDTH"));
+        ic.setLarg(item.getAttribute("DEPTH"));
+        ic.setEsp(item.getAttribute("HEIGHT"));
 
-        return xlsService.generateXlsFile(listItems);
+        Element  itemReference= (Element) item.getElementsByTagName("REFERENCES").item(0);
 
+        ic.setBord_sup(getBord(itemReference,1));
+        ic.setBord_inf(getBord(itemReference,2));
+        ic.setBord_esq(getBord(itemReference,3));
+        ic.setBord_dir(getBord(itemReference,4));
+        ic.setChapa(
+                getReferenceAttributeByTag(item,"MATERIAL")
+                        +"-"+getReferenceAttributeByTag(item,"THICKNESS")
+                        +"-"+getReferenceAttributeByTag(item,"MODEL")
+        );
+        return ic;
+    }
+
+    private boolean isLooseComponent(Element item) {
+        return (isComponent(item) && isParentNode(item));
     }
 
     public boolean isComponent(Element item){
@@ -111,7 +134,7 @@ public class ConverterService {
     }
 
     private boolean isParentNode(Element produto) {
-        return produto.getAttribute("UNIQUEPARENTID").equals("-2");
+        return (produto.getAttribute("UNIQUEPARENTID").equals("-2") && !isComponent(produto));
     }
 
     private Document getDocument(InputStream xmlInputStream) throws ParserConfigurationException, SAXException, IOException {

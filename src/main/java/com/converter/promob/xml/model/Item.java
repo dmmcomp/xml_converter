@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Item {
+    private boolean isComponent;
     private String ambiente;
     private int uniqueId;
     private boolean parentNode;
@@ -21,10 +22,11 @@ public class Item {
     private String chapa;
     private String esp;
 
-    public Item(int uniqueId, boolean parentNode, String description) {
+    public Item(int uniqueId, boolean parentNode, String description, boolean isComponent) {
         this.uniqueId = uniqueId;
         this.parentNode = parentNode;
         this.description = description;
+        this.isComponent = isComponent;
     }
     public Item(){}
     public int getUniqueId() {
@@ -154,5 +156,13 @@ public class Item {
 
     public void setAmbiente(String ambiente) {
         this.ambiente = ambiente;
+    }
+
+    public boolean isComponent() {
+        return isComponent;
+    }
+
+    public void setComponent(boolean component) {
+        isComponent = component;
     }
 }

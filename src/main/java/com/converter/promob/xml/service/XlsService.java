@@ -54,6 +54,22 @@ public class XlsService {
                     rowNum++;
                 }
                 rowNum++;
+            }else if(item.isComponent()){
+                Row row = sheet.createRow(rowNum);
+                row.createCell(0).setCellValue(item.getAmbiente());
+                row.createCell(1).setCellValue(item.getDescription());
+                row.createCell(2).setCellValue(item.getComp());
+                row.createCell(3).setCellValue(item.getLarg());
+                row.createCell(4).setCellValue(item.getQuant());
+                row.createCell(5).setCellValue("");
+                row.createCell(6).setCellValue(item.getBord_sup());
+                row.createCell(7).setCellValue(item.getBord_inf());
+                row.createCell(8).setCellValue(item.getBord_esq());
+                row.createCell(9).setCellValue(item.getBord_dir());
+                row.createCell(10).setCellValue("");
+                row.createCell(11).setCellValue(item.getChapa());
+                row.createCell(12).setCellValue(item.getEsp());
+                rowNum++;
             }
         }
 
