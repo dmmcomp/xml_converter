@@ -1,7 +1,13 @@
 package com.converter.promob.xml.service;
 
 import com.converter.promob.xml.model.Item;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFPalette;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
@@ -19,17 +25,28 @@ public class XlsService {
         headerFont.setBold(true);
         headerFont.setFontHeightInPoints((short) 9);
         headerFont.setColor(IndexedColors.BLACK.getIndex());
-
-        CellStyle headerCellStyle = workbook.createCellStyle();
-        headerCellStyle.setFont(headerFont);
-
         Row headerRow = sheet.createRow(0);
 
-        String[] headers = {"CLIENTE - AMBIENTE","DESC. PEÇA","COMP", "LARG","QUANT","MATERIAL","BORDA SUP","BORDA INF","BORDA DIR","BORDA ESQ","VEIO","CHAPA","ESP."};
+        String[] headers = {"CLIENTE - AMBIENTE","DESC. PEÇA","COMP", "LARG","QUANT","BORDA SUP","BORDA INF","BORDA DIR","BORDA ESQ","COR DA FITA DE BORDO FRONTAL","CHAPA","ESP."};
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(headers[i]);
-            cell.setCellStyle(headerCellStyle);
+
+            if(headers[i].equals("COMP") || headers[i].equals("BORDA SUP") || headers[i].equals("BORDA INF")){
+                CellStyle cellStyle = setRedColor(workbook);
+                cellStyle.setFont(headerFont);
+                cell.setCellStyle(cellStyle);
+            }
+            else if(headers[i].equals("LARG") || headers[i].equals("BORDA DIR") || headers[i].equals("BORDA ESQ")){
+                CellStyle cellStyle = setBlueColor(workbook);
+                cellStyle.setFont(headerFont);
+                cell.setCellStyle(cellStyle);
+            } else{
+                CellStyle cellStyle = setDefaultStyle(workbook);
+                cellStyle.setFont(headerFont);
+                cell.setCellStyle(cellStyle);
+            }
+
         }
 
         int rowNum = 1;
@@ -38,37 +55,33 @@ public class XlsService {
             if(!item.getChildItems().isEmpty()) {
                 for (Item filho : item.getChildItems()) {
                     Row row = sheet.createRow(rowNum);
-                    row.createCell(0).setCellValue(filho.getAmbiente());
-                    row.createCell(1).setCellValue(filho.getDescription() + " - " + item.getUniqueId());
-                    row.createCell(2).setCellValue(filho.getComp());
-                    row.createCell(3).setCellValue(filho.getLarg());
-                    row.createCell(4).setCellValue(filho.getQuant());
-                    row.createCell(5).setCellValue("");
-                    row.createCell(6).setCellValue(filho.getBord_sup());
-                    row.createCell(7).setCellValue(filho.getBord_inf());
-                    row.createCell(8).setCellValue(filho.getBord_esq());
-                    row.createCell(9).setCellValue(filho.getBord_dir());
-                    row.createCell(10).setCellValue("");
-                    row.createCell(11).setCellValue(filho.getChapa());
-                    row.createCell(12).setCellValue(filho.getEsp());
+
+                    Cell cellAmb = row.createCell(0);
+                    cellAmb.setCellValue(filho.getAmbiente());
+                    cellAmb.setCellStyle(setDefaultStyle(workbook));
+
+                    Cell cellDesc = row.createCell(1);
+                    cellDesc.setCellValue(filho.getDescription() + " - " + item.getUniqueId());
+                    cellDesc.setCellStyle(setDefaultStyle(workbook));
+
+                    buildRow(filho, row,workbook);
+
                     rowNum++;
                 }
                 rowNum++;
             }else if(item.isComponent()){
                 Row row = sheet.createRow(rowNum);
-                row.createCell(0).setCellValue(item.getAmbiente());
-                row.createCell(1).setCellValue(item.getDescription());
-                row.createCell(2).setCellValue(item.getComp());
-                row.createCell(3).setCellValue(item.getLarg());
-                row.createCell(4).setCellValue(item.getQuant());
-                row.createCell(5).setCellValue("");
-                row.createCell(6).setCellValue(item.getBord_sup());
-                row.createCell(7).setCellValue(item.getBord_inf());
-                row.createCell(8).setCellValue(item.getBord_esq());
-                row.createCell(9).setCellValue(item.getBord_dir());
-                row.createCell(10).setCellValue("");
-                row.createCell(11).setCellValue(item.getChapa());
-                row.createCell(12).setCellValue(item.getEsp());
+
+                Cell cellAmb = row.createCell(0);
+                cellAmb.setCellValue(item.getAmbiente());
+                cellAmb.setCellStyle(setDefaultStyle(workbook));
+
+                Cell cellDesc = row.createCell(1);
+                cellDesc.setCellValue(item.getDescription());
+                cellDesc.setCellStyle(setDefaultStyle(workbook));
+
+                buildRow(item,row,workbook);
+
                 rowNum++;
             }
         }
@@ -82,6 +95,90 @@ public class XlsService {
 
         out.close();
         return out;
+    }
+
+
+    private void buildRow(Item filho, Row row,Workbook workbook) {
+        Cell cellComp = row.createCell(2);
+        cellComp.setCellValue(filho.getComp());
+        cellComp.setCellStyle(setRedColor(workbook));
+
+        Cell largCell = row.createCell(3);
+        largCell.setCellValue(filho.getLarg());
+        largCell.setCellStyle(setBlueColor(workbook));
+
+        Cell cellQuant = row.createCell(4);
+        cellQuant.setCellValue(filho.getQuant());
+        cellQuant.setCellStyle(setDefaultStyle(workbook));
+
+        Cell bordSeupCell = row.createCell(5);
+        bordSeupCell.setCellValue(filho.getBord_sup());
+        bordSeupCell.setCellStyle(setRedColor(workbook));
+
+        Cell bordInfCell = row.createCell(6);
+        bordInfCell.setCellValue(filho.getBord_inf());
+        bordInfCell.setCellStyle(setRedColor(workbook));
+
+        Cell bordEsqCell = row.createCell(7);
+        bordEsqCell.setCellValue(filho.getBord_esq());
+        bordEsqCell.setCellStyle(setBlueColor(workbook));
+
+        Cell bordDirCell = row.createCell(8);
+        bordDirCell.setCellValue(filho.getBord_dir());
+        bordDirCell.setCellStyle(setBlueColor(workbook));
+
+        Cell bord_fron = row.createCell(9);
+        bord_fron.setCellValue(filho.getCor_borda_frontal());
+        bord_fron.setCellStyle(setDefaultStyle(workbook));
+
+        Cell cellChapa = row.createCell(10);
+        cellChapa.setCellValue(filho.getChapa());
+        cellChapa.setCellStyle(setDefaultStyle(workbook));
+
+        Cell cellEsp = row.createCell(11);
+        cellEsp.setCellValue(filho.getEsp());
+        cellEsp.setCellStyle(setDefaultStyle(workbook));
+    }
+
+
+    private CellStyle setDefaultStyle(Workbook workbook){
+        CellStyle style = workbook.createCellStyle();
+        getAllBord(style);
+        return style;
+    }
+
+    private CellStyle setBlueColor(Workbook workbook) {
+        HSSFWorkbook hwb = new HSSFWorkbook();
+        HSSFPalette palette = hwb.getCustomPalette();
+        HSSFColor myColor = palette.findSimilarColor(189, 214, 238);
+        CellStyle style = workbook.createCellStyle();
+        getAllBord(style);
+        style.setFillForegroundColor(myColor.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        return style;
+    }
+
+    private  CellStyle getAllBord(CellStyle style){
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        return style;
+    }
+
+    private CellStyle setRedColor(Workbook workbook ) {
+
+        HSSFWorkbook hwb = new HSSFWorkbook();
+        HSSFPalette palette = hwb.getCustomPalette();
+
+        HSSFColor myColor = palette.findSimilarColor(247, 202, 172);
+
+        CellStyle style = workbook.createCellStyle();
+        getAllBord(style);
+        style.setFillForegroundColor(myColor.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        return style;
     }
 
 }

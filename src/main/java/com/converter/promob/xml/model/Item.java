@@ -18,6 +18,7 @@ public class Item {
     private String bord_inf;
     private String bord_dir;
     private String bord_esq;
+    private String cor_borda_frontal;
     private String veio;
     private String chapa;
     private String esp;
@@ -164,5 +165,13 @@ public class Item {
 
     public void setComponent(boolean component) {
         isComponent = component;
+    }
+
+    public String getCor_borda_frontal() {
+        return cor_borda_frontal;
+    }
+
+    public void setCor_borda_frontal(String cor_borda_frontal) {
+        this.cor_borda_frontal = cor_borda_frontal;
     }
 }

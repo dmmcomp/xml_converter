@@ -88,6 +88,7 @@ public class ConverterService {
         ic.setBord_inf(getBord(itemReference,2));
         ic.setBord_esq(getBord(itemReference,3));
         ic.setBord_dir(getBord(itemReference,4));
+        ic.setCor_borda_frontal(getBordaFrontal(itemReference));
         ic.setChapa(
                 getReferenceAttributeByTag(item,"MATERIAL")
                         +"-"+getReferenceAttributeByTag(item,"THICKNESS")
@@ -120,13 +121,23 @@ public class ConverterService {
         return itemTag.getAttribute("REFERENCE");
     }
 
+    private String getBordaFrontal(Element itemReference){
+
+        Element bord_sup = (Element) itemReference.getElementsByTagName("MODEL_DESCRIPTION_FITA_FRO").item(0);
+        if(bord_sup==null){
+            return "";
+        }
+        String reference = bord_sup.getAttribute("REFERENCE");
+        return (reference.isEmpty() ? "" : reference);
+    }
+
     private String getBord(Element itemReference,int borda) {
 
         Element bord_sup = (Element) itemReference.getElementsByTagName("FITA_BORDA_"+borda).item(0);
         if(bord_sup==null){
             return "";
         }
-        return (bord_sup.getAttribute("REFERENCE").equals("1") ? "X" : "");
+        return (bord_sup.getAttribute("REFERENCE").equals("1") ? "1" : "0");
     }
 
     private boolean doesNotHasItems(Element item) {
