@@ -78,9 +78,9 @@ public class ConverterService {
         ic.setDescription(item.getAttribute("DESCRIPTION"));
         ic.setParentNode(false);
         ic.setQuant(getIntegerAttribute(item, "REPETITION"));
-        ic.setComp(item.getAttribute("WIDTH"));
-        ic.setLarg(item.getAttribute("DEPTH"));
-        ic.setEsp(item.getAttribute("HEIGHT"));
+        ic.setComp(item.getAttribute("WIDTH").replaceAll("[.][^.]+$", ""));
+        ic.setLarg(item.getAttribute("DEPTH").replaceAll("[.][^.]+$", ""));
+        ic.setEsp(item.getAttribute("HEIGHT").replaceAll("[.][^.]+$", ""));
 
         Element  itemReference= (Element) item.getElementsByTagName("REFERENCES").item(0);
 
@@ -89,6 +89,7 @@ public class ConverterService {
         ic.setBord_esq(getBord(itemReference,3));
         ic.setBord_dir(getBord(itemReference,4));
         ic.setCor_borda_frontal(getBordaFrontal(itemReference));
+        ic.setCor_borda(getReferenceAttributeByTag(item,"MODEL_DESCRIPTION_FITA"));
         ic.setChapa(
                 getReferenceAttributeByTag(item,"MATERIAL")
                         +"-"+getReferenceAttributeByTag(item,"THICKNESS")
@@ -137,7 +138,7 @@ public class ConverterService {
         if(bord_sup==null){
             return "";
         }
-        return (bord_sup.getAttribute("REFERENCE").equals("1") ? "1" : "0");
+        return (bord_sup.getAttribute("REFERENCE").equals("1") ? "X" : "");
     }
 
     private boolean doesNotHasItems(Element item) {

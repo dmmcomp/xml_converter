@@ -19,9 +19,11 @@ public class Item {
     private String bord_dir;
     private String bord_esq;
     private String cor_borda_frontal;
+    private String cor_borda;
     private String veio;
     private String chapa;
     private String esp;
+
 
     public Item(int uniqueId, boolean parentNode, String description, boolean isComponent) {
         this.uniqueId = uniqueId;
@@ -173,5 +175,13 @@ public class Item {
 
     public void setCor_borda_frontal(String cor_borda_frontal) {
         this.cor_borda_frontal = cor_borda_frontal;
+    }
+
+    public String getCor_borda() {
+        return cor_borda;
+    }
+
+    public void setCor_borda(String cor_borda) {
+        this.cor_borda = cor_borda;
     }
 }
