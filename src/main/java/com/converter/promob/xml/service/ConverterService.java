@@ -30,7 +30,6 @@ public class ConverterService {
         List<Item> listItems = new ArrayList<>();
 
         process("AMBIENT",xmlDocument, listItems);
-        process("ITEMSWITHOUTPRICE",xmlDocument, listItems);
 
         return xlsService.generateXlsFile(listItems);
 
@@ -67,6 +66,10 @@ public class ConverterService {
                     Item ic = itemConstrutor(listaItems, item);
                     itemPai.getChildItems().add(ic);
                 }
+
+                if(j == lista.getLength()-1 ){
+                    listItems.add(itemPai);
+                }
             }
         }
     }
@@ -88,8 +91,12 @@ public class ConverterService {
         ic.setBord_inf(getBord(itemReference,2));
         ic.setBord_esq(getBord(itemReference,3));
         ic.setBord_dir(getBord(itemReference,4));
-        ic.setCor_borda_frontal(getBordaFrontal(itemReference));
-        ic.setCor_borda(getReferenceAttributeByTag(item,"MODEL_DESCRIPTION_FITA"));
+        String bordaFrontal = getBordaFrontal(itemReference);
+        if(bordaFrontal.equals("")){
+            ic.setCor_borda(getReferenceAttributeByTag(item,"MODEL_DESCRIPTION_FITA"));
+        }else{
+            ic.setCor_borda(bordaFrontal);
+        }
         ic.setChapa(
                 getReferenceAttributeByTag(item,"MATERIAL")
                         +"-"+getReferenceAttributeByTag(item,"THICKNESS")

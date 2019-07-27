@@ -27,7 +27,7 @@ public class XlsService {
         headerFont.setColor(IndexedColors.BLACK.getIndex());
         Row headerRow = sheet.createRow(0);
 
-        String[] headers = {"CLIENTE - AMBIENTE","DESC. PEÇA","COMP", "LARG","QUANT","BORDA SUP","BORDA INF","BORDA DIR","BORDA ESQ","COR DA FITA DE BORDA","COR DA FITA DE BORDA FRONTAL","CHAPA","ESP."};
+        String[] headers = {"CLIENTE - AMBIENTE","DESC. PEÇA","COMP", "LARG","QUANT","BORDA SUP","BORDA INF","BORDA DIR","BORDA ESQ","COR DA FITA DE BORDA","CHAPA","ESP."};
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(headers[i]);
@@ -131,15 +131,11 @@ public class XlsService {
         cor_fita.setCellValue(filho.getCor_borda());
         cor_fita.setCellStyle(setDefaultStyle(workbook));
 
-        Cell bord_fron = row.createCell(10);
-        bord_fron.setCellValue(filho.getCor_borda_frontal());
-        bord_fron.setCellStyle(setDefaultStyle(workbook));
-
-        Cell cellChapa = row.createCell(11);
+        Cell cellChapa = row.createCell(10);
         cellChapa.setCellValue(filho.getChapa());
         cellChapa.setCellStyle(setDefaultStyle(workbook));
 
-        Cell cellEsp = row.createCell(12);
+        Cell cellEsp = row.createCell(11);
         cellEsp.setCellValue(filho.getEsp());
         cellEsp.setCellStyle(setDefaultStyle(workbook));
     }
