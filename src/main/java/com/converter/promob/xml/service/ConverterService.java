@@ -60,7 +60,16 @@ public class ConverterService {
                 }else if(isLooseComponent(item)){
                     Item e = itemConstrutor(listaItems, item);
                     e.setComponent(true);
-                    listItems.add(e);
+
+
+                    if(doesNotHasItems(item)){
+                        listItems.add(e);
+                    }else{
+                        if (itemPai != null) {
+                            listItems.add(itemPai);
+                        }
+                        itemPai = e;
+                    }
                 }
                 else if (doesNotHasItems(item) && isComponent(item)) {
                     Item ic = itemConstrutor(listaItems, item);
@@ -106,7 +115,7 @@ public class ConverterService {
     }
 
     private boolean isLooseComponent(Element item) {
-        return (isComponent(item) && isParentNode(item));
+        return (isComponent(item) && item.getAttribute("UNIQUEPARENTID").equals("-2"));
     }
 
     public boolean isComponent(Element item){

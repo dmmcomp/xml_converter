@@ -52,7 +52,42 @@ public class XlsService {
         int rowNum = 1;
 
         for (Item item : itens) {
-            if(!item.getChildItems().isEmpty()) {
+            if(item.isComponent()){
+                Row row = sheet.createRow(rowNum);
+
+                Cell cellAmb = row.createCell(0);
+                cellAmb.setCellValue(item.getAmbiente());
+                cellAmb.setCellStyle(setDefaultStyle(workbook));
+
+                Cell cellDesc = row.createCell(1);
+
+                cellDesc.setCellValue(item.getDescription() + " - " + item.getUniqueId());
+
+                cellDesc.setCellStyle(setDefaultStyle(workbook));
+
+                buildRow(item,row,workbook);
+                rowNum++;
+                if(!item.getChildItems().isEmpty()){
+                    for (Item filho : item.getChildItems()) {
+                        Row childRow = sheet.createRow(rowNum);
+
+                        Cell cellAmbC = childRow.createCell(0);
+                        cellAmbC.setCellValue(filho.getAmbiente());
+                        cellAmbC.setCellStyle(setDefaultStyle(workbook));
+
+                        Cell cellDescC = childRow.createCell(1);
+                        cellDescC.setCellValue(filho.getDescription() + " - " + item.getUniqueId());
+                        cellDescC.setCellStyle(setDefaultStyle(workbook));
+
+                        buildRow(filho, childRow,workbook);
+
+                        rowNum++;
+                    }
+                }
+
+                
+                rowNum++;
+            } else if(!item.getChildItems().isEmpty()) {
                 for (Item filho : item.getChildItems()) {
                     Row row = sheet.createRow(rowNum);
 
@@ -68,20 +103,6 @@ public class XlsService {
 
                     rowNum++;
                 }
-                rowNum++;
-            }else if(item.isComponent()){
-                Row row = sheet.createRow(rowNum);
-
-                Cell cellAmb = row.createCell(0);
-                cellAmb.setCellValue(item.getAmbiente());
-                cellAmb.setCellStyle(setDefaultStyle(workbook));
-
-                Cell cellDesc = row.createCell(1);
-                cellDesc.setCellValue(item.getDescription());
-                cellDesc.setCellStyle(setDefaultStyle(workbook));
-
-                buildRow(item,row,workbook);
-
                 rowNum++;
             }
         }
