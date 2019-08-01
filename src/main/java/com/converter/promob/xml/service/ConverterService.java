@@ -73,7 +73,7 @@ public class ConverterService {
                         itemPai = e;
                     }
                 }
-                else if (doesNotHasItems(item) && isComponent(item)) {
+                else if (isComponent(item)) {
                     Item ic = itemConstrutor(listaItems, item);
                     itemPai.getChildItems().add(ic);
                 }
