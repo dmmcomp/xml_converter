@@ -174,7 +174,7 @@ public class XlsService {
         cor_fita.setCellValue(filho.getCor_borda());
         cor_fita.setCellStyle(setDefaultStyle(workbook));
 
-        Cell cellChapa = row.createCell(12);
+        Cell cellChapa = row.createCell(11);
         cellChapa.setCellValue(filho.getChapa());
         cellChapa.setCellStyle(setDefaultStyle(workbook));
 
