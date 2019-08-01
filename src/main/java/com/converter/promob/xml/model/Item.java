@@ -9,6 +9,7 @@ public class Item {
     private int uniqueId;
     private boolean parentNode;
     private String description;
+    private String textDimension;
     private List<Item> childItems = new ArrayList<>();
     private String comp;
     private String larg;
@@ -24,11 +25,12 @@ public class Item {
     private String esp;
 
 
-    public Item(int uniqueId, boolean parentNode, String description, boolean isComponent) {
+    public Item(int uniqueId, boolean parentNode, String description,String textDimension, boolean isComponent) {
         this.uniqueId = uniqueId;
         this.parentNode = parentNode;
         this.description = description;
         this.isComponent = isComponent;
+        this.textDimension = textDimension;
     }
     public Item(){}
     public int getUniqueId() {
@@ -174,5 +176,13 @@ public class Item {
 
     public void setCor_borda(String cor_borda) {
         this.cor_borda = cor_borda;
+    }
+
+    public String getTextDimension() {
+        return textDimension;
+    }
+
+    public void setTextDimension(String textDimension) {
+        this.textDimension = textDimension;
     }
 }

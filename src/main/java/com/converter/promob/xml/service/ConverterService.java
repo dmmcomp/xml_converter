@@ -55,11 +55,13 @@ public class ConverterService {
                             getIntegerAttribute(item, "UNIQUEID"),
                             true,
                             item.getAttribute("DESCRIPTION"),
+                            item.getAttribute("TEXTDIMENSION"),
                             false);
 
                 }else if(isLooseComponent(item)){
                     Item e = itemConstrutor(listaItems, item);
                     e.setComponent(true);
+                    e.setTextDimension(item.getAttribute("TEXTDIMENSION"));
 
 
                     if(doesNotHasItems(item)){
