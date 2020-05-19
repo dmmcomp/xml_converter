@@ -1,12 +1,14 @@
 package com.converter.promob.xml.service;
 
 import com.converter.promob.xml.model.Item;
+import com.google.gson.Gson;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -16,7 +18,7 @@ import java.util.List;
 @Service
 public class XlsService {
 
-    public ByteArrayOutputStream generateXlsFile(List<Item> itens) throws IOException {
+    public String generateXlsFile(List<Item> itens) throws IOException {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("items");
 
@@ -26,118 +28,124 @@ public class XlsService {
         headerFont.setColor(IndexedColors.BLACK.getIndex());
         Row headerRow = sheet.createRow(0);
 
-        String[] headers = {"MODULO", "CLIENTE - AMBIENTE","DESC. PEÇA","COMP", "LARG","QUANT","BORDA SUP","BORDA INF","BORDA DIR","BORDA ESQ","COR DA FITA DE BORDA","CHAPA","ESP."};
-        for (int i = 0; i < headers.length; i++) {
-            Cell cell = headerRow.createCell(i);
-            cell.setCellValue(headers[i]);
+        Gson g = new Gson();
 
-            if(headers[i].equals("COMP") || headers[i].equals("BORDA SUP") || headers[i].equals("BORDA INF")){
-                CellStyle cellStyle = setRedColor(workbook);
-                cellStyle.setFont(headerFont);
-                cell.setCellStyle(cellStyle);
-            }
-            else if(headers[i].equals("LARG") || headers[i].equals("BORDA DIR") || headers[i].equals("BORDA ESQ")){
-                CellStyle cellStyle = setBlueColor(workbook);
-                cellStyle.setFont(headerFont);
-                cell.setCellStyle(cellStyle);
-            } else{
-                CellStyle cellStyle = setDefaultStyle(workbook);
-                cellStyle.setFont(headerFont);
-                cell.setCellStyle(cellStyle);
-            }
-
-        }
-
-        int rowNum = 1;
-
-        for (Item item : itens) {
-            if(item.isComponent()){
-                Row row = sheet.createRow(rowNum);
-                int initialRow = rowNum;
-                Cell cellModel = row.createCell(0);
-                cellModel.setCellValue(item.getDescription() + " - " + item.getUniqueId() + " - " +item.getTextDimension());
-                cellModel.setCellStyle(setModuleStyle(workbook));
-
-                Cell cellAmb = row.createCell(1);
-                cellAmb.setCellValue(item.getAmbiente());
-                cellAmb.setCellStyle(setDefaultStyle(workbook));
-
-                Cell cellDesc = row.createCell(2);
-
-                cellDesc.setCellValue(item.getDescription() + " - " + item.getUniqueId());
-
-                cellDesc.setCellStyle(setDefaultStyle(workbook));
-
-                buildRow(item,row,workbook);
-                rowNum++;
-                if(!item.getChildItems().isEmpty()){
-                    for (Item filho : item.getChildItems()) {
-                        Row childRow = sheet.createRow(rowNum);
-
-                        Cell cellModelC = row.createCell(0);
-                        cellModelC.setCellValue("");
-                        cellModelC.setCellStyle(setDefaultStyle(workbook));
-
-                        Cell cellAmbC = childRow.createCell(1);
-                        cellAmbC.setCellValue(filho.getAmbiente());
-                        cellAmbC.setCellStyle(setDefaultStyle(workbook));
-
-                        Cell cellDescC = childRow.createCell(2);
-                        cellDescC.setCellValue(filho.getDescription() + " - " + item.getUniqueId());
-                        cellDescC.setCellStyle(setDefaultStyle(workbook));
-
-                        buildRow(filho, childRow,workbook);
-
-                        rowNum++;
-                    }
-                }
-
-                int finalRow = rowNum;
-                if(finalRow > initialRow+1){
-                    sheet.addMergedRegion(new CellRangeAddress(initialRow,finalRow-1,0,0));
-                }
-
-                rowNum++;
-            } else if(!item.getChildItems().isEmpty()) {
-                int initialRow = rowNum;
-                for (Item filho : item.getChildItems()) {
-
-                    Row row = sheet.createRow(rowNum);
-
-                    Cell cellModel = row.createCell(0);
-                    cellModel.setCellValue(item.getDescription() + " - " + item.getUniqueId() + " - " +item.getTextDimension());
-                    cellModel.setCellStyle(setModuleStyle(workbook));
+        return g.toJson(itens);
 
 
-                    Cell cellAmb = row.createCell(1);
-                    cellAmb.setCellValue(filho.getAmbiente());
-                    cellAmb.setCellStyle(setDefaultStyle(workbook));
 
-                    Cell cellDesc = row.createCell(2);
-                    cellDesc.setCellValue(filho.getDescription() + " - " + item.getUniqueId());
-                    cellDesc.setCellStyle(setDefaultStyle(workbook));
-
-                    buildRow(filho, row,workbook);
-
-                    rowNum++;
-                }
-                int finalRow = rowNum;
-                if(finalRow > initialRow+1){
-                    sheet.addMergedRegion(new CellRangeAddress(initialRow,finalRow-1,0,0));
-                }
-                rowNum++;
-            }
-        }
-
-        for (int i = 0; i < headers.length; i++) {
-            sheet.autoSizeColumn(i);
-        }
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        workbook.write(out);
-
-        out.close();
-        return out;
+//        String[] headers = {"MODULO", "CLIENTE - AMBIENTE","DESC. PEÇA","COMP", "LARG","QUANT","BORDA SUP","BORDA INF","BORDA DIR","BORDA ESQ","COR DA FITA DE BORDA","CHAPA","ESP."};
+//        for (int i = 0; i < headers.length; i++) {
+//            Cell cell = headerRow.createCell(i);
+//            cell.setCellValue(headers[i]);
+//
+//            if(headers[i].equals("COMP") || headers[i].equals("BORDA SUP") || headers[i].equals("BORDA INF")){
+//                CellStyle cellStyle = setRedColor(workbook);
+//                cellStyle.setFont(headerFont);
+//                cell.setCellStyle(cellStyle);
+//            }
+//            else if(headers[i].equals("LARG") || headers[i].equals("BORDA DIR") || headers[i].equals("BORDA ESQ")){
+//                CellStyle cellStyle = setBlueColor(workbook);
+//                cellStyle.setFont(headerFont);
+//                cell.setCellStyle(cellStyle);
+//            } else{
+//                CellStyle cellStyle = setDefaultStyle(workbook);
+//                cellStyle.setFont(headerFont);
+//                cell.setCellStyle(cellStyle);
+//            }
+//
+//        }
+//
+//        int rowNum = 1;
+//
+//        for (Item item : itens) {
+//            if(item.isComponent()){
+//                Row row = sheet.createRow(rowNum);
+//                int initialRow = rowNum;
+//                Cell cellModel = row.createCell(0);
+//                cellModel.setCellValue(item.getDescription() + " - " + item.getUniqueId() + " - " +item.getTextDimension());
+//                cellModel.setCellStyle(setModuleStyle(workbook));
+//
+//                Cell; cellAmb = row.createCell(1);
+//                cellAmb.setCellValue(item.getAmbiente());
+//                cellAmb.setCellStyle(setDefaultStyle(workbook));
+//
+//                Cell cellDesc = row.createCell(2);
+//
+//                cellDesc.setCellValue(item.getDescription() + " - " + item.getUniqueId());
+//
+//                cellDesc.setCellStyle(setDefaultStyle(workbook));
+//
+//                buildRow(item,row,workbook);
+//                rowNum++;
+//                if(!item.getChildItems().isEmpty()){
+//                    for (Item filho : item.getChildItems()) {
+//                        Row childRow = sheet.createRow(rowNum);
+//
+//                        Cell cellModelC = row.createCell(0);
+//                        cellModelC.setCellValue("");
+//                        cellModelC.setCellStyle(setDefaultStyle(workbook));
+//
+//                        Cell cellAmbC = childRow.createCell(1);
+//                        cellAmbC.setCellValue(filho.getAmbiente());
+//                        cellAmbC.setCellStyle(setDefaultStyle(workbook));
+//
+//                        Cell cellDescC = childRow.createCell(2);
+//                        cellDescC.setCellValue(filho.getDescription() + " - " + item.getUniqueId());
+//                        cellDescC.setCellStyle(setDefaultStyle(workbook));
+//
+//                        buildRow(filho, childRow,workbook);
+//
+//                        rowNum++;
+//                    }
+//                }
+//
+//                int finalRow = rowNum;
+//                if(finalRow > initialRow+1){
+//                    sheet.addMergedRegion(new CellRangeAddress(initialRow,finalRow-1,0,0));
+//                }
+//
+//                rowNum++;
+//            } else if(!item.getChildItems().isEmpty()) {
+//                int initialRow = rowNum;
+//                for (Item filho : item.getChildItems()) {
+//
+//                    Row row = sheet.createRow(rowNum);
+//
+//                    Cell cellModel = row.createCell(0);
+//                    cellModel.setCellValue(item.getDescription() + " - " + item.getUniqueId() + " - " +item.getTextDimension());
+//                    cellModel.setCellStyle(setModuleStyle(workbook));
+//
+//
+//                    Cell cellAmb = row.createCell(1);
+//                    cellAmb.setCellValue(filho.getAmbiente());
+//                    cellAmb.setCellStyle(setDefaultStyle(workbook));
+//
+//                    Cell cellDesc = row.createCell(2);
+//                    cellDesc.setCellValue(filho.getDescription() + " - " + item.getUniqueId());
+//                    cellDesc.setCellStyle(setDefaultStyle(workbook));
+//
+//                    buildRow(filho, row,workbook);
+//
+//                    rowNum++;
+//                }
+//                int finalRow = rowNum;
+//                if(finalRow > initialRow+1){
+//                    sheet.addMergedRegion(new CellRangeAddress(initialRow,finalRow-1,0,0));
+//                }
+//                rowNum++;
+//            }
+//        }
+//
+//        for (int i = 0; i < headers.length; i++) {
+//            sheet.autoSizeColumn(i);
+//        }
+//
+//        ByteArrayOutputStream out = new ByteArrayOutputStream();
+//        workbook.write(out);
+//
+//        out.close();
+//        return out;
     }
 
 

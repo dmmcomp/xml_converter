@@ -28,11 +28,9 @@ public class PromobXmlController {
     @CrossOrigin
     @PostMapping(value="/execute")
     @ResponseBody
-    public void index(@RequestParam("file") MultipartFile file, HttpServletResponse response) throws Exception {
+    public String index(@RequestParam("file") MultipartFile file, HttpServletResponse response) throws Exception {
         //response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        ByteArrayOutputStream xlsOutputStream = converterService.executeConversion(file.getInputStream());
-        response.setHeader("Content-Disposition", "attachment; filename="
-                + FilenameUtils.removeExtension(file.getOriginalFilename()) +".xlsx");
-        response.getOutputStream().write(xlsOutputStream.toByteArray());
+        String xlsOutputStream = converterService.executeConversion(file.getInputStream());
+        return xlsOutputStream;
     }
 }

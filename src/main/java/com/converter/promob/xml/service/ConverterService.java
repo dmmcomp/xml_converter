@@ -25,7 +25,7 @@ public class ConverterService {
     @Autowired
     private  XlsService xlsService;
 
-    public ByteArrayOutputStream executeConversion(InputStream xmlInputStream) throws ParserConfigurationException, IOException, SAXException {
+    public String executeConversion(InputStream xmlInputStream) throws ParserConfigurationException, IOException, SAXException {
         Document xmlDocument = getDocument(xmlInputStream);
         List<Item> listItems = new ArrayList<>();
 
