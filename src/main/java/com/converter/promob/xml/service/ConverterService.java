@@ -24,15 +24,34 @@ public class ConverterService {
 
     @Autowired
     private  XlsService xlsService;
+    private String clienteName;
 
     public String executeConversion(InputStream xmlInputStream) throws ParserConfigurationException, IOException, SAXException {
         Document xmlDocument = getDocument(xmlInputStream);
         List<Item> listItems = new ArrayList<>();
-
+        this.clienteName = getClienteName(xmlDocument,"CUSTOMERSDATA");
         process("AMBIENT",xmlDocument, listItems);
 
         return xlsService.generateXlsFile(listItems);
 
+    }
+
+    public String getClienteName(Document xmlDocument, String bigTag){
+        NodeList customerDataNode = xmlDocument.getElementsByTagName(bigTag);
+
+        Element listData = (Element) customerDataNode.item(0);
+
+        NodeList itemList = listData.getElementsByTagName("DATA");
+        String clientName = "";
+        for(int i = 0; i < itemList.getLength() ; i++){
+            Element item = (Element) itemList.item(i);
+            String attributeId = item.getAttribute("ID");
+            if(attributeId.equals("nomecliente")){
+                clientName =  item.getAttribute("VALUE");
+                break;
+            }
+        }
+        return clientName;
     }
 
     private void process(String bigTag,Document xmlDocument, List<Item> listItems) {
@@ -52,6 +71,8 @@ public class ConverterService {
                         listItems.add(itemPai);
                     }
                     itemPai = new Item(
+                            this.clienteName,
+                            item.getAttribute("OBSERVATIONS"),
                             getIntegerAttribute(item, "UNIQUEID"),
                             true,
                             item.getAttribute("DESCRIPTION"),
@@ -95,6 +116,7 @@ public class ConverterService {
         ic.setComp(item.getAttribute("WIDTH").replaceAll("[.][^.]+$", ""));
         ic.setLarg(item.getAttribute("DEPTH").replaceAll("[.][^.]+$", ""));
         ic.setEsp(item.getAttribute("HEIGHT").replaceAll("[.][^.]+$", ""));
+        ic.setObservations(item.getAttribute("OBSERVATIONS"));
 
         Element  itemReference= (Element) item.getElementsByTagName("REFERENCES").item(0);
 
