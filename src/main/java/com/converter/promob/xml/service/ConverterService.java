@@ -81,6 +81,7 @@ public class ConverterService {
 
                 }else if(isLooseComponent(item)){
                     Item e = itemConstrutor(listaItems, item);
+                    e.setClientName(this.clienteName);
                     e.setComponent(true);
                     e.setTextDimension(item.getAttribute("TEXTDIMENSION"));
 
