@@ -5,6 +5,8 @@ import java.util.List;
 
 public class Item {
     private boolean isComponent;
+    private String clientName;
+    private String observations;
     private String ambiente;
     private int uniqueId;
     private boolean parentNode;
@@ -25,7 +27,9 @@ public class Item {
     private String esp;
 
 
-    public Item(int uniqueId, boolean parentNode, String description,String textDimension, boolean isComponent) {
+    public Item(String clientName,String observations,int uniqueId, boolean parentNode, String description,String textDimension, boolean isComponent) {
+        this.clientName = clientName;
+        this.observations = observations;
         this.uniqueId = uniqueId;
         this.parentNode = parentNode;
         this.description = description;
@@ -36,6 +40,13 @@ public class Item {
     public int getUniqueId() {
         return uniqueId;
     }
+
+    public String getClientName(){return this.clientName;}
+    public void setClientName(String clientName){ this.clientName = clientName;}
+
+    public String getObservations(){return this.observations;}
+
+    public void setObservations(String observations){ this.observations = observations;}
 
     public void setUniqueId(int uniqueId) {
         this.uniqueId = uniqueId;
