@@ -1,0 +1,15 @@
+services:
+  webcut-xml-api-export-prod:
+    image: webcut-xml-api-export-prod
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    container_name: webcut-xml-api-export-prod
+    tty: true    
+    networks:
+      - default
+networks:
+  default:
+    external:
+      name: ${NETWORK}
